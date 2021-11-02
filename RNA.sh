@@ -143,8 +143,31 @@ SuffixRawR=R2_001.fastq.gz
 STARgenome=/gluster/wgp/wgp/hawk/indexes/STAR/GRCm38_STAR2.7.9a/ #GRCh38 GRCm38
 GENCODE=gencode.vM17.annotation.gtf #human=gencode.v27.annotation.gtf #mouse=gencode.vM17.annotation.gtf
 
+# ------------------------------------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------------------------------
+# User to leave (modify with care)
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------------------------------
 
-#User to leave (modify with care)
+# Colors
+NOCOLOR='\033[0m'
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+ORANGE='\033[0;33m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+LIGHTGRAY='\033[0;37m'
+DARKGRAY='\033[1;30m'
+LIGHTRED='\033[1;31m'
+LIGHTGREEN='\033[1;32m'
+YELLOW='\033[1;33m'
+LIGHTBLUE='\033[1;34m'
+LIGHTPURPLE='\033[1;35m'
+LIGHTCYAN='\033[1;36m'
+WHITE='\033[1;37m'
+
+
 workingdir=/scratch/$USER/$JobID
 tmpdir=/scratch/$USER/$JobID/tmp
 singhome=/gluster/wgp/wgp/resources/singularity
@@ -158,7 +181,14 @@ F_COUNTS=12 #number of jobs for featureCounts to parallel (Assuming 24 nodes, 2 
 
 #Setup
 mkdir -p /scratch/$USER/$JobID
-exec &>> /scratch/$USER/$JobID/${JobID}.log
+
+#exec &>> /scratch/$USER/$JobID/${JobID}.log
+exec &> >(tee "/scratch/$USER/$JobID/${JobID}.log")
+exec 2>&1
+
+
+echo -e "${CYAN}Creating output directories${NOCOLOR}"
+
 mkdir -p /scratch/$USER/$JobID/Singularity
 mkdir -p /scratch/$USER/$JobID/output/logs
 mkdir -p /scratch/$USER/$JobID/output/logs/STAR
@@ -171,11 +201,14 @@ mkdir -p /scratch/$USER/$JobID/STARgdir/reads
 mkdir -p /scratch/$USER/$JobID/STARgdir/Mapped
 
 #check for singularities and programs
+echo -e "${CYAN}Copying singularity shells and other programs${NOCOLOR}"
 cp -u $singhome/ContamCheckv3.simg $singjob
 cp -u $singhome/SARTools.simg $singjob
 cp -r -u /gluster/wgp/wgp/resources/localprograms/fastp/ $singjob
 cp -u $FEATURECOUNTS/featureCounts $singjob
 
+
+echo -e "${CYAN}Copying raw data to working directory${NOCOLOR}"
 #Copy raw data for analysis
 if [ "$SKIPCOPYRAW" = "TRUE" ];
   then echo "Skipping copyraw"
@@ -204,13 +237,16 @@ else
 fi
 
 #Copy STAR genome or make another (see top)
+echo -e "${CYAN}Copying STAR indexes${NOCOLOR}"
 cp -u $STARgenome/* $STARgdir
 
 
 #Run a contamination check through singularity
+echo -e "${CYAN}Running contamination checks${NOCOLOR}"
 if [ "$SKIPCONTAMQC" = "TRUE" ];
   then echo "Skipping contamination QC"
-  else 
+  else
+    echo "Running contamination check"
     if [[ ! -e $tmpdir/${JobID}_F.fastq ]]; then
      zcat $tmpdir/*_F.fastq.gz >> $tmpdir/${JobID}_F.fastq
     fi
@@ -218,7 +254,7 @@ if [ "$SKIPCONTAMQC" = "TRUE" ];
     if [[ ! -e $tmpdir/${JobID}_R.fastq ]]; then
      zcat $tmpdir/*_R.fastq.gz >> $tmpdir/${JobID}_R.fastq
     fi
-    sbatch --export=singjob="$singjob",tmpdir="$tmpdir",JobID="$JobID" ContamCheck.sh -p scw1179
+    sbatch --account=scw1179 --export=singjob="$singjob",tmpdir="$tmpdir",JobID="$JobID" ContamCheck.sh 
 fi
 
 #Check for job to finish
@@ -234,12 +270,13 @@ fi
 #Run QC and trimming. N=number of jobs that can run at once. Assuming 24 nodes and 2 threads per task, then 12 jobs can run parallel at one time #
 ##################################################################################################################################################
 
+echo -e "${CYAN}Starting trimming using fastp${NOCOLOR}"
 #Send off job with variables from this script
 if [ "$SKIPQCTRIM" = "TRUE" ];
   then echo "Skipping Quality trimming and assessment"
 elif [ "$SINGLE_END" = "TRUE" ];
-  then sbatch --export=SamplesRaw="$SamplesRaw",tmpdir="$tmpdir",workingdir="$workingdir",singjob="$singjob",JobID="$JobID",FastP_N="$FastP_N" QualTrimSE.sh -p scw1179 &
-else sbatch --export=SamplesRaw="$SamplesRaw",tmpdir="$tmpdir",workingdir="$workingdir",singjob="$singjob",JobID="$JobID",FastP_N="$FastP_N" QualTrim.sh -p scw1179 &
+  then sbatch --account=scw1179 --export=SamplesRaw="$SamplesRaw",tmpdir="$tmpdir",workingdir="$workingdir",singjob="$singjob",JobID="$JobID",FastP_N="$FastP_N" QualTrimSE.sh &
+else sbatch --account=scw1179 --export=SamplesRaw="$SamplesRaw",tmpdir="$tmpdir",workingdir="$workingdir",singjob="$singjob",JobID="$JobID",FastP_N="$FastP_N" QualTrim.sh &
 fi
 
 #Check for job to finish
@@ -257,9 +294,11 @@ fi
 ##################################################################################################################################################
 #Merge multiple lanes/dates                                                                :not zcat not needed for combining 2+ gz files        #
 ##################################################################################################################################################
+
+echo -e "${CYAN}Starting fastq merging${NOCOLOR}"
 if [ "$SKIPMERGE" = "TRUE" ];
-   then 
-     if [ "$SINGLE_END" = "TRUE" ]; 
+   then
+     if [ "$SINGLE_END" = "TRUE" ];
       then
         for i in $Samples2merge;
         do ln -s $workingdir/output/trim/${i}_*F.fq.gz $STARgdir/reads/${i}_M_F.fq.gz
@@ -272,7 +311,7 @@ if [ "$SKIPMERGE" = "TRUE" ];
      fi
    else
     rm $STARgdir/reads/*
-     if [ "$SINGLE_END" = "TRUE" ]; 
+     if [ "$SINGLE_END" = "TRUE" ];
       then
         for i in $Samples2merge;
         do cat $workingdir/output/trim/${i}_*F.fq.gz >> $STARgdir/reads/${i}_M_F.fq.gz
@@ -290,12 +329,14 @@ fi
 #Run mapping. N=number of jobs that can run at once. Assuming 24 nodes and x threads per task, then y jobs can run parallel at one time          #
 ##################################################################################################################################################
 
+echo -e "${CYAN}Starting fastq merging${NOCOLOR}"
+
 #Send off job with variables from this script
 if [ "$SKIPMAP" = "TRUE" ];
   then echo "Skipping Mapping"
 elif [ "$SINGLE_END" = "TRUE" ];
-    then sbatch --export=Samples2merge="$Samples2merge",singjob="$singjob",STARgdir="$STARgdir",JobID="$JobID",STAR_N="$STAR_N",F_COUNTS="$F_COUNTS",OUTPUT="$OUTPUT",GENCODE="$GENCODE",CV="$CV" STARM_SE.sh -p scw1179 &
-else sbatch --export=Samples2merge="$Samples2merge",singjob="$singjob",STARgdir="$STARgdir",JobID="$JobID",STAR_N="$STAR_N",F_COUNTS="$F_COUNTS",OUTPUT="$OUTPUT",GENCODE="$GENCODE",CV="$CV" STARM.sh -p scw1179 &
+    then sbatch --account=scw1179 --export=Samples2merge="$Samples2merge",singjob="$singjob",STARgdir="$STARgdir",JobID="$JobID",STAR_N="$STAR_N",F_COUNTS="$F_COUNTS",OUTPUT="$OUTPUT",GENCODE="$GENCODE",CV="$CV" STARM_SE.sh &
+else sbatch --account=scw1179 --export=Samples2merge="$Samples2merge",singjob="$singjob",STARgdir="$STARgdir",JobID="$JobID",STAR_N="$STAR_N",F_COUNTS="$F_COUNTS",OUTPUT="$OUTPUT",GENCODE="$GENCODE",CV="$CV" STARM.sh &
 fi
 
 #Check for job to finish
@@ -305,7 +346,7 @@ if grep -qe "Mapping finished" /scratch/$USER/$JobID/${JobID}.log;
    then echo "..."
   else (tail -f -n1 /scratch/$USER/$JobID/${JobID}.log & ) | grep -qe "Mapping finished" && echo "..."
 fi
-  
+
 # run multiqc on log files
  if [ "MULTIQC" = "TRUE" ];
   then echo "Skipping MultiQC"
@@ -313,10 +354,11 @@ fi
  fi
 
 
-
 ##################################################################################################################################################
 #Run SARTools                                                                                                                                    #
 ##################################################################################################################################################
+
+echo -e "${CYAN}Starting SARTools analysis${NOCOLOR}"
 
 if [ "$SKIPSARTOOLS" = "TRUE" ];
  then echo "Skipping SARTools"${OUTPUT}/SARTools/metadata.txt
@@ -365,7 +407,7 @@ if [ "$SKIPSARTOOLS" = "TRUE" ];
 
 
 
-  sbatch --export=JobID="$JobID",singjob="$singjob",OUTPUT="$OUTPUT" DiffExp.sh -p scw1179
+  sbatch --account=scw1179 --export=JobID="$JobID",singjob="$singjob",OUTPUT="$OUTPUT" DiffExp.sh 
 fi
 
 #Check for job to finish
@@ -378,7 +420,7 @@ fi
 
 #Grab clean files
 if grep -qe "SARTools singularity done" /scratch/$USER/$JobID/${JobID}.log;
- then 
+ then
   tabbing=$(find ${OUTPUT}/SARTools/tables/*.complete.txt -type f);
   for i in $tabbing
   do
@@ -395,5 +437,3 @@ if grep -qe "SARTools singularity done" /scratch/$USER/$JobID/${JobID}.log;
  else grep -qe "Skipping SARTools" /scratch/$USER/$JobID/${JobID}.log
   echo "..."
 fi
-
-

@@ -9,7 +9,7 @@
 # Project ID
 JobID=X201
 
-# Select genomes (hg38, GRCm38 [mm10])
+# Select genomes (hg38, m38 [mm10])
 GENOME=m38
 
 # Location of fastq files

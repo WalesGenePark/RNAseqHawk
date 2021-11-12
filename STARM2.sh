@@ -11,13 +11,13 @@ module load raven
 module load STAR/2.7.0e
 
 
-echo ${SAMPLE}
-echo ${singjob}
-echo ${STARgdir}
-echo ${JobID}
-echo ${F_COUNTS}
-echo ${OUTPUT}
-echo ${GENCODE}
+echo "SAMPLE=${SAMPLE}"
+echo "singjob=${singjob}"
+echo "STARgdir=${STARgdir}"
+echo "JobID=${JobID}"
+echo "F_COUNTS=${F_COUNTS}"
+echo "OUTPUT=${OUTPUT}"
+echo "GENCODE=${GENCODE}"
 
 STAR \
   --readFilesCommand zcat \

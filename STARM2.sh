@@ -7,8 +7,7 @@
 #SBATCH --error=%J.err
 #SBATCH --output=%J.out
 
-module load raven
-module load STAR/2.7.0e
+module load singularity
 
 
 echo "SAMPLE=${SAMPLE}"
@@ -19,7 +18,7 @@ echo "F_COUNTS=${F_COUNTS}"
 echo "OUTPUT=${OUTPUT}"
 echo "GENCODE=${GENCODE}"
 
-STAR \
+singularity run ${singjob}/STAR-2.7.1a.sif \
   --readFilesCommand zcat \
   --twopassMode Basic \
   --runThreadN 8 \

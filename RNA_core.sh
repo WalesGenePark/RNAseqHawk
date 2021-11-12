@@ -1,3 +1,4 @@
+
 #!/bin/bash
 
 ################################################################################################################
@@ -9,7 +10,7 @@
 # Project ID
 JobID=X201
 
-# Select genomes (hg38, m38 [mm10])
+# Select genomes (hg38, GRCm38 [mm10])
 GENOME=m38
 
 # Location of fastq files
@@ -59,7 +60,7 @@ SuffixRawR=R2_001.fastq.gz
 # Tweak which parts to run
 SKIPCOPYRAW=            #Set to TRUE to skip
 SKIPQCTRIM=             #Set to TRUE to skip
-SKIPMERGE=TRUE          #Set to TRUE to skip
+SKIPMERGE=              #Set to TRUE to skip
 SKIPMAP=                #Set to TRUE to skip
 SKIPSARTOOLS=TRUE       #Set to TRUE to skip
 SKIPMULTIQC=            #Set to TRUE to skip
@@ -77,12 +78,12 @@ LIGHTGRAY='\033[0;37m'; DARKGRAY='\033[1;30m'; LIGHTRED='\033[1;31m'; LIGHTGREEN
 LIGHTPURPLE='\033[1;35m'; LIGHTCYAN='\033[1;36m'; WHITE='\033[1;37m'
 
 # Detect genome and select files
-if [ ${GENOME} eq "hg38"]; then
+if [ ${GENOME} == "hg38" ]; then
     STARgenome=/gluster/wgp/wgp/hawk/indexes/STAR/GRCh38/
     GENCODE=gencode.v27.annotation.gtf
 fi
 
-if [ ${GENOME} eq "m38"]; then
+if [ ${GENOME} == "m38" ]; then
     STARgenome=/gluster/wgp/wgp/hawk/indexes/STAR/GRCm38_STAR2.7.9a/ 
     GENCODE=gencode.vM17.annotation.gtf 
 
@@ -159,7 +160,7 @@ fi
 
 #Copy STAR genome or make another (see top)
 echo -e "${CYAN}Copying STAR indexes${NOCOLOR}"
-cp -u $STARgenome/* $STARgdir
+cp -u ${STARgenome}/* ${STARgdir}
 
 
 #Check for job to finish
@@ -189,7 +190,7 @@ if grep -qe "QualTrim finished" /scratch/$USER/$JobID/${JobID}.log;
    then echo "..."
   elif grep -qe "Skipping Quality trimming and assessment" /scratch/$USER/$JobID/${JobID}.log;
    then echo "..."
-  else (tail -f -n1 /scratch/$USER/$JobID/${JobID}.log & ) | grep -qe "QualTrim finished" && echo "..."
+  else (tail -f -n1 /scratch/$USER/$JobID/${JobID}.log & ) | grep -qe "QualTrim finished" && echo "Complete"
 fi
 
 
@@ -231,7 +232,7 @@ fi
 #Run mapping. N=number of jobs that can run at once. Assuming 24 nodes and x threads per task, then y jobs can run parallel at one time          #
 ##################################################################################################################################################
 
-echo -e "${CYAN}Starting fastq merging${NOCOLOR}"
+echo -e "${CYAN}Starting STAR mapping${NOCOLOR}"
 
 #Send off job with variables from this script
 if [ "$SKIPMAP" = "TRUE" ];
@@ -246,7 +247,7 @@ if grep -qe "Mapping finished" /scratch/$USER/$JobID/${JobID}.log;
    then echo "..."
   elif grep -qe "Skipping Mapping" /scratch/$USER/$JobID/${JobID}.log;
    then echo "..."
-  else (tail -f -n1 /scratch/$USER/$JobID/${JobID}.log & ) | grep -qe "Mapping finished" && echo "..."
+  else (tail -f -n1 /scratch/$USER/$JobID/${JobID}.log & ) | grep -qe "Mapping finished" && echo "Complete"
 fi
 
 # run multiqc on log files
@@ -254,3 +255,4 @@ fi
   then echo "Skipping MultiQC"
   else module load multiqc/1.7 && multiqc --force $OUTPUT/logs  -o ${OUTPUT}
  fi
+

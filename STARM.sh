@@ -8,7 +8,7 @@
 #SBATCH --output=%J.out
 
 module load raven
-module load STAR/2.7.9a
+module load STAR/2.7.0e
 
 
 open_sem(){

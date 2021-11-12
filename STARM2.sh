@@ -10,6 +10,15 @@
 module load raven
 module load STAR/2.7.0e
 
+
+echo ${SAMPLE}
+echo ${singjob}
+echo ${STARgdir}
+echo ${JobID}
+echo ${F_COUNTS}
+echo ${OUTPUT}
+echo ${GENCODE}
+
 STAR \
     --genomeDir "$STARgdir" \
     --readFilesCommand zcat \

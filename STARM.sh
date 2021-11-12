@@ -10,7 +10,6 @@
 module load raven
 module load STAR/2.7.0e
 
-
 open_sem(){
     mkfifo pipe-$$
     exec 3<>pipe-$$
@@ -32,6 +31,7 @@ run_with_lock(){
     printf '%.3d' $? >&3
     )&
 }
+
 N=$STAR_N
 open_sem $N
 

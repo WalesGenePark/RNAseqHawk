@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --partition=c_compute_wgp1
-#SBATCH --nodes=1
-#SBATCH --tasks-per-node=8
+#SBATCH --ntasks 1 
+#SBATCH --cpus-per-task 8
 #SBATCH --mem=250000
 #SBATCH --error=%J.err
 #SBATCH --output=%J.out

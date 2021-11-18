@@ -1,20 +1,8 @@
 #!/bin/bash
-#SBATCH --partition=c_compute_wgp1
-#SBATCH --nodes 1 
-#SBATCH --cpus-per-task 8 
-#SBATCH --ntasks-per-node=1
 #SBATCH --error=%J.err
 #SBATCH --output=%J.out
 
 module load singularity
-
-#echo "SAMPLE=${SAMPLE}"
-#echo "singjob=${singjob}"
-#echo "STARgdir=${STARgdir}"
-#echo "JobID=${JobID}"
-#echo "F_COUNTS=${F_COUNTS}"
-#echo "OUTPUT=${OUTPUT}"
-#echo "GENCODE=${GENCODE}"
 
 singularity run ${singjob}/STAR-2.7.1a.sif \
   --readFilesCommand zcat \

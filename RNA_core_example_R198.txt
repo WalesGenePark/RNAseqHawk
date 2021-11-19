@@ -1,10 +1,16 @@
-# Setup working directory and clone scripts from github
+# Get info from fastq names
 # ----------------------------------------------------------------------
 
-mkdir -p /scratch/${USER}/${PROJECT}
-cd /scratch/${USER}/${PROJECT}
+PROJECT=R198
 
-git clone https://github.com/WalesGenePark/RNAseqHawk.git .
+cd /scratch/c.wptpjg/211109_NB501042_0295_AH5J3NBGXK-fastqs
+
+SamplesRaw=`find * -name "*.fastq.gz" | grep ${PROJECT} | sed "s/_R[12]_[^_]*$//" | sort | uniq`
+echo ${SamplesRaw}
+
+Samples2merge=`find * -name "*.fastq.gz" | grep ${PROJECT} | sed "s/_L001_R[12]_[^_]*$//" | sort | uniq`
+echo ${Samples2merge}
+
 
 
 ################################################################################################################
@@ -61,6 +67,7 @@ SuffixRawF=_R1_001.fastq.gz
 SuffixRawR=_R2_001.fastq.gz
 
 
+
 # ------------------------------------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------------------------------------------------
 # User to leave (modify with care)
@@ -91,7 +98,8 @@ if [ ${GENOME} == "m38" ]; then
 fi
 
 # Define directories
-WORKINGDIR=/scratch/${USER}/${JobID}
+WORKINGDIR=/scratch/$USER/$JobID
+
 
 # Setup directories
 TMPDIR=${WORKINGDIR}/tmp
@@ -274,4 +282,7 @@ while [[ ${STATUS} != "COMPLETED" ]]; do
 done
 
 echo "FINISHED!"
+
+
+
 

@@ -6,7 +6,7 @@ singularity exec ${SINGDIR}/multiqc-v1.11.sif multiqc --force $OUTPUT/logs -o ${
 N_SAMPLES=`echo ${Samples2merge} | tr " " "\n" | wc -l`
 N_FASTQ=`find ${TMPDIR} -name "*.fastq.gz" | wc -l`
 N_TRIMFASTQ=`find ${OUTPUT}/trim -name "*fq.gz" | wc -l`
-N_BAM=`find ${STARGDIR} -name "*.bam" | wc -l`
+N_BAM=`find ${OUTPUT} -name "*.bam" | wc -l`
 
 N_GENE=`find ${OUTPUT}/STAR -name "*gn.out" | wc -l`
 N_TRANS=`find ${OUTPUT}/STAR -name "*tc.out" | wc -l`

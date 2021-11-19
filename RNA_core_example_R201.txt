@@ -1,10 +1,11 @@
-# Setup working directory and clone scripts from github
+# Copy fastq files to scratch
 # ----------------------------------------------------------------------
 
-mkdir -p /scratch/${USER}/${PROJECT}
-cd /scratch/${USER}/${PROJECT}
+FASTQDIR=/gluster/wgp/wgp/sequencing/illumina/novaseq/210916_A00748_0148_BHKGFCDRXY/fastq_files/R201
 
-git clone https://github.com/WalesGenePark/RNAseqHawk.git .
+cd ${FASTQDIR}
+/gluster/wgp/wgp/hawk/utils/toscratch
+
 
 
 ################################################################################################################
@@ -14,51 +15,54 @@ git clone https://github.com/WalesGenePark/RNAseqHawk.git .
 ################################################################################################################
 
 # Project ID
-JobID=R198
+JobID=X201
 
-# Select genome (hg38, GRCm38 [mm10])
-GENOME=hg38
+# Select genomes (hg38, GRCm38 [mm10])
+GENOME=m38
 
 # Location of fastq files
 SINGLE_END=FALSE #Set to TRUE to run!
-LocationRaw1=/scratch/c.wptpjg/211109_NB501042_0295_AH5J3NBGXK-fastqs
+LocationRaw1=/scratch/c.wptpjg/gluster/wgp/wgp/sequencing/illumina/novaseq/210916_A00748_0148_BHKGFCDRXY/fastq_files/R201
 #LocationRaw2=XXXXXXXXXX
 #LocationRaw3=XXXXXXXXXX
 #LocationRaw4=XXXXXXXXXX
 
 # List of samples (without suffix)
-SamplesRaw="R198-N-005_S1_L001
-R198-N-008_S2_L001
-R198-N-014_S3_L001
-R198-N-025_S4_L001
-R198-N-026_S5_L001
-R198-N-030_S6_L001
-R198-N-031_S7_L001
-R198-N-033_S8_L001
-R198-N-035_S9_L001
-R198-N-036_S10_L001
-R198-N-037_S11_L001
-R198-N-039_S12_L001
+SamplesRaw="R201-A-001_S10_L001
+R201-A-001_S10_L002
+R201-A-002_S11_L001
+R201-A-002_S11_L002
+R201-A-003_S12_L001
+R201-A-003_S12_L002
+R201-A-004_S13_L001
+R201-A-004_S13_L002
+R201-A-005_S14_L001
+R201-A-005_S14_L002
+R201-A-006_S15_L001
+R201-A-006_S15_L002
+R201-A-007_S16_L001
+R201-A-007_S16_L002
+R201-A-008_S17_L001
+R201-A-008_S17_L002
+R201-A-009_S18_L001
+R201-A-009_S18_L002
 "
 
 # Merging information  (if no merging required, use same list as SamplesRaw else samples name without lane e.g R173-A-001_S1)
-Samples2merge="R198-N-005_S1
-R198-N-008_S2
-R198-N-014_S3
-R198-N-025_S4
-R198-N-026_S5
-R198-N-030_S6
-R198-N-031_S7
-R198-N-033_S8
-R198-N-035_S9
-R198-N-036_S10
-R198-N-037_S11
-R198-N-039_S12
+Samples2merge="R201-A-001_S10
+R201-A-002_S11
+R201-A-003_S12
+R201-A-004_S13
+R201-A-005_S14
+R201-A-006_S15
+R201-A-007_S16
+R201-A-008_S17
+R201-A-009_S18
 "
 
 # fastq suffix settings
-SuffixRawF=_R1_001.fastq.gz
-SuffixRawR=_R2_001.fastq.gz
+SuffixRawF=R1_001.fastq.gz
+SuffixRawR=R2_001.fastq.gz
 
 
 # ------------------------------------------------------------------------------------------------------------------------------------------------
@@ -91,7 +95,8 @@ if [ ${GENOME} == "m38" ]; then
 fi
 
 # Define directories
-WORKINGDIR=/scratch/${USER}/${JobID}
+WORKINGDIR=/scratch/$USER/$JobID
+
 
 # Setup directories
 TMPDIR=${WORKINGDIR}/tmp
@@ -274,4 +279,6 @@ while [[ ${STATUS} != "COMPLETED" ]]; do
 done
 
 echo "FINISHED!"
+
+
 

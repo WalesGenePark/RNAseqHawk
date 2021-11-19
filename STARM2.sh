@@ -20,7 +20,7 @@ singularity run ${SINGDIR}/featurecounts-2.0.3.sif \
    -p -s 2 --donotsort -B -t "exon" -g "transcript_id" \
    -a ${STARgdir}/${GENCODE} \
    -o ${OUTPUT}/STAR/Mapped/${SAMPLE}.tc.out \
-   ${STARgdir}/Mapped/${SAMPLE}_mapAligned.sortedByCoord.out.bam 
+   ${STARGDIR}/Mapped/${SAMPLE}_mapAligned.sortedByCoord.out.bam 
    
 cut -f1,7 "${OUTPUT}/STAR/Mapped/${SAMPLE}.tc.out" > ${OUTPUT}/STAR/Mapped/${SAMPLE}.tc.out.tab
 sed -i 1,2d "${OUTPUT}/STAR/Mapped/${SAMPLE}.tc.out.tab"
@@ -29,7 +29,7 @@ singularity run ${SINGDIR}/featurecounts-2.0.3.sif \
     -p -s 2 --donotsort -B -t "exon" -g "gene_id" \
     -a ${STARgdir}/${GENCODE} \
     -o ${OUTPUT}/STAR/Mapped/${SAMPLE}.gn.out \
-    ${STARgdir}/Mapped/${SAMPLE}_mapAligned.sortedByCoord.out.bam
+    ${STARGDIR}/Mapped/${SAMPLE}_mapAligned.sortedByCoord.out.bam
     
 cut -f1,7 "${OUTPUT}/STAR/Mapped/${SAMPLE}.gn.out" > ${OUTPUT}/STAR/Mapped/${SAMPLE}.gn.out.tab
 sed -i 1,2d "${OUTPUT}/STAR/Mapped/${SAMPLE}.gn.out.tab"
@@ -39,15 +39,15 @@ singularity run ${SINGDIR}/featurecounts-2.0.3.sif \
     -p -s 2 --donotsort -B -t "exon" -g "exon_id" \
     -a ${STARgdir}/${GENCODE} \
     -o ${OUTPUT}/STAR/Mapped/${SAMPLE}.ex.out \
-    ${STARgdir}/Mapped/${SAMPLE}_mapAligned.sortedByCoord.out.bam
+    ${STARGDIR}/Mapped/${SAMPLE}_mapAligned.sortedByCoord.out.bam
     
 cut -f1,7 "${OUTPUT}/STAR/Mapped/${SAMPLE}.ex.out" > ${OUTPUT}/STAR/Mapped/${SAMPLE}.ex.out.tab
 sed -i 1,2d "${OUTPUT}/STAR/Mapped/${SAMPLE}.ex.out.tab" 
 
 
-mv ${STARgdir}/Mapped/*.final.out ${OUTPUT}/logs/STAR
-mv ${STARgdir}/Mapped/${SAMPLE}_mapAligned.sortedByCoord.out.bam ${OUTPUT}/STAR
-mv ${STARgdir}/Mapped/${SAMPLE}_mapSJ.out.tab ${OUTPUT}/STAR
+mv ${STARGDIR}/Mapped/*.final.out ${OUTPUT}/logs/STAR
+mv ${STARGDIR}/Mapped/${SAMPLE}_mapAligned.sortedByCoord.out.bam ${OUTPUT}/STAR
+mv ${STARGDIR}/Mapped/${SAMPLE}_mapSJ.out.tab ${OUTPUT}/STAR
 
 
 

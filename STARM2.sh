@@ -1,6 +1,4 @@
 #!/bin/bash
-#SBATCH --error=%J.err
-#SBATCH --output=%J.out
 
 module load singularity
 

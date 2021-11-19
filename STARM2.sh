@@ -18,7 +18,7 @@ singularity run ${SINGDIR}/STAR-2.7.1a.sif \
 
 singularity run ${SINGDIR}/featurecounts-2.0.3.sif \
    -p -s 2 --donotsort -B -t "exon" -g "transcript_id" \
-   -a ${STARgdir}/${GENCODE} \
+   -a ${STARGDIR}/${GENCODE} \
    -o ${OUTPUT}/STAR/Mapped/${SAMPLE}.tc.out \
    ${STARGDIR}/Mapped/${SAMPLE}_mapAligned.sortedByCoord.out.bam 
    
@@ -27,7 +27,7 @@ sed -i 1,2d "${OUTPUT}/STAR/Mapped/${SAMPLE}.tc.out.tab"
 
 singularity run ${SINGDIR}/featurecounts-2.0.3.sif \
     -p -s 2 --donotsort -B -t "exon" -g "gene_id" \
-    -a ${STARgdir}/${GENCODE} \
+    -a ${STARGDIR}/${GENCODE} \
     -o ${OUTPUT}/STAR/Mapped/${SAMPLE}.gn.out \
     ${STARGDIR}/Mapped/${SAMPLE}_mapAligned.sortedByCoord.out.bam
     
@@ -37,7 +37,7 @@ sed -i 1,2d "${OUTPUT}/STAR/Mapped/${SAMPLE}.gn.out.tab"
 
 singularity run ${SINGDIR}/featurecounts-2.0.3.sif \
     -p -s 2 --donotsort -B -t "exon" -g "exon_id" \
-    -a ${STARgdir}/${GENCODE} \
+    -a ${STARGDIR}/${GENCODE} \
     -o ${OUTPUT}/STAR/Mapped/${SAMPLE}.ex.out \
     ${STARGDIR}/Mapped/${SAMPLE}_mapAligned.sortedByCoord.out.bam
     

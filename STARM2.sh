@@ -9,9 +9,9 @@ singularity run ${SINGDIR}/STAR-2.7.1a.sif \
   --chimSegmentMin 15 \
   --outFilterMultimapNmax 1 \
   --outSAMtype BAM SortedByCoordinate \
-  --readFilesIn "$STARgdir/reads/${SAMPLE}_M_F.fq.gz" "$STARgdir/reads/${SAMPLE}_M_R.fq.gz" \
-  --genomeDir "$STARgdir" \
-  --outFileNamePrefix "$STARgdir/Mapped/${SAMPLE}_map"
+  --readFilesIn "$STARGDIR/reads/${SAMPLE}_M_F.fq.gz" "$STARGDIR/reads/${SAMPLE}_M_R.fq.gz" \
+  --genomeDir "$STARGDIR" \
+  --outFileNamePrefix "$STARGDIR/Mapped/${SAMPLE}_map"
 
 # Add this line in to keep unmapped reads (Unmapped.out.mate1, Unmapped.out.mate2)
 #--outReadsUnmapped

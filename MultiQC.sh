@@ -1,7 +1,7 @@
 #!/bin/bash
 
 module load singularity
-singularity exec ${singjob}/multiqc-v1.11.sif multiqc --force $OUTPUT/logs -o ${OUTPUT}
+singularity exec ${SINGDIR}/multiqc-v1.11.sif multiqc --force $OUTPUT/logs -o ${OUTPUT}
 
 N_SAMPLES=`echo ${Samples2merge} | tr " " "\n" | wc -l`
 N_FASTQ=`find ${TMPDIR} -name "*.fastq.gz" | wc -l`

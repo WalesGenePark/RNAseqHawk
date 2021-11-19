@@ -1,4 +1,4 @@
 #!/bin/bash
 
 module load singularity
-singularity run ${singjob}/fastp-v0.23.1.sif --in1 $tmpdir/${SamplesRaw}_F.fastq.gz --in2 $tmpdir/${SamplesRaw}_R.fastq.gz --out1 $workingdir/output/trim/${SamplesRaw}_trimmed_F.fq.gz --out2 $workingdir/output/trim/${SamplesRaw}_trimmed_R.fq.gz --thread 8 -h $workingdir/output/logs/${SamplesRaw}_fastp.html -j $workingdir/output/logs/${SamplesRaw}_fastp.json
+singularity run ${SINGDIR}/fastp-v0.23.1.sif --in1 $tmpdir/${SamplesRaw}_F.fastq.gz --in2 $tmpdir/${SamplesRaw}_R.fastq.gz --out1 $workingdir/output/trim/${SamplesRaw}_trimmed_F.fq.gz --out2 $workingdir/output/trim/${SamplesRaw}_trimmed_R.fq.gz --thread 8 -h $workingdir/output/logs/${SamplesRaw}_fastp.html -j $workingdir/output/logs/${SamplesRaw}_fastp.json
